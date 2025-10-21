@@ -1,5 +1,5 @@
-# KipuBankV2 (non-upgradeable)
-
+# KipuBankV2
+Evolucion del contrato inteligente KipuBank de bovedas personales.
 Bóvedas personales **multi-token** (ETH + ERC-20) con **cap global** y **tope por retiro** expresados en **USD(6)**.  
 Convierte **ETH → USD** vía **Chainlink ETH/USD** y trata **ERC-20 “USD-stable”** (USDC/USDT/DAI) como 1:1 usando normalización de decimales.  
 Incluye **AccessControl**, **Pausable**, **ReentrancyGuard**, patrón **CEI**, errores personalizados y eventos.
@@ -32,9 +32,11 @@ Incluye **AccessControl**, **Pausable**, **ReentrancyGuard**, patrón **CEI**, e
 
 ## 2) Decisiones de diseño y trade-offs
 
-- **No-upgradeable (Ruta A)**  
+- **No-upgradeable** (vs upgradeable)
+  Decision de diseño que prioriza la robustez y seguridad por sobre la escalabilidad.  
   **+** Menos superficie de ataque y gas más bajo que con proxy.  
   **–** Cambios de lógica requieren nuevo despliegue (posible migración off-chain).
+  >Alternativa a futuro: implementar contrato como upgradeable con librerias OpenZeppelin.
 
 - **Contabilidad “accounted” en USD(6)**  
   `accountedTotalUsd6` refleja lo contabilizado al depositar/retirar (no mark-to-market).
@@ -55,6 +57,13 @@ Incluye **AccessControl**, **Pausable**, **ReentrancyGuard**, patrón **CEI**, e
   **+** Herramienta de rescate.  
   **–** Si se reanuda, puede requerir reconciliación contable externa.
 
+### Patrones aplicados
+- **Checks-Effects-Interactions (CEI)**
+- **Mutex/Reentrancy Guard**
+- **Circuit Breaker**
+- **Whitelist de tokens**
+- **Forwarding seguro en receive/fallback**
+- **Oracle Sanity Guards**
 ---
 
 ## 3) Despliegue
